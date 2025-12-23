@@ -1,0 +1,79 @@
+{
+  "name": "Telegram_agent_2",
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "emailaddress"
+            },
+            {
+              "name": "subject"
+            },
+            {
+              "name": "emailbody"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "8329ec83-266e-48e3-bc70-9eab227a3050",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.emailaddress }}",
+        "subject": "={{ $json.subject }}",
+        "emailType": "text",
+        "message": "={{ $json.emailbody }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "03aa2fc2-a5ba-4032-80d1-a9c87a5923c7",
+      "name": "Send a message",
+      "webhookId": "21dcc4f5-749f-4593-8617-40cc078b8abd",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "kKFfkaRIKRWbjaTM",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "5afc17fc-5533-4d76-8dba-2050e3cd371b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e23de2e4d6a091f9baefcbdf87c6858ff12b67c6facb4375e421500fa33dfec3"
+  },
+  "id": "XqCjnocQPBIozSa8",
+  "tags": []
+}

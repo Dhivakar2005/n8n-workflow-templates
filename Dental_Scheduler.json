@@ -1,0 +1,426 @@
+{
+  "name": "Dental_Scheduler",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "a0b86bf5-5b92-4202-9eae-467dfc956c84",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -496,
+        376
+      ],
+      "id": "36e58347-270b-414b-9ee5-02ddc6fe053a",
+      "name": "Webhook",
+      "webhookId": "a0b86bf5-5b92-4202-9eae-467dfc956c84"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.chatInput }}",
+        "options": {
+          "systemMessage": "You are a Dental Appointment Availability & Booking AI Agent.\n\nYour task:\n1. Check calendar availability using the Get availability tool\n2. Ask user for confirmation (they must reply YES)\n3. Upon confirmation, IMMEDIATELY call Create an event tool with start_time and end_time\n4. Then call Google Sheets tool to log the appointment\n5. Confirm booking to user\n\nCRITICAL RULES:\n- Working hours: 9:00 AM – 5:00 PM\n- Appointment duration: 1 hour\n- When user confirms (says YES, confirm, book it), you MUST call the Create an event tool\n- Pass start_time and end_time in ISO format (e.g., 2025-12-19T11:00:00)\n- Pass summary as \"Dental Appointment\"\n- After booking, respond: \"Your appointment on [DATE] at [TIME] has been scheduled!\"\n\nNever skip calling the Create an event tool after user confirms."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        40,
+        48
+      ],
+      "id": "469f1e21-ed33-4a6f-ab31-7454e33d7759",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        -496,
+        600
+      ],
+      "id": "5086d4e3-24ac-4692-82e4-11914f65a086",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "resource": "calendar",
+        "calendar": {
+          "__rl": true,
+          "value": "dhikrish42@gmail.com",
+          "mode": "list",
+          "cachedResultName": "dhikrish42@gmail.com"
+        },
+        "timeMin": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Start_Time', ``, 'string') }}",
+        "timeMax": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('End_Time', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        -16,
+        272
+      ],
+      "id": "c859c7d6-95f8-4411-9879-d25c22c75f23",
+      "name": "Get availability",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "uncox1ugt9pMFpwt",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "dhikrish42@gmail.com",
+          "mode": "list",
+          "cachedResultName": "dhikrish42@gmail.com"
+        },
+        "start": "={{ $fromAI('start_time', 'Appointment start time in ISO format', 'string') }}",
+        "end": "={{ $fromAI('end_time', 'Appointment end time in ISO format', 'string') }}",
+        "additionalFields": {
+          "description": "={{ $fromAI('description', 'Event title/summary', 'string', 'Dental Appointment') }}",
+          "summary": "={{ $fromAI('summary', 'Event title/summary', 'string', 'Dental Appointment') }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        112,
+        272
+      ],
+      "id": "cdf5a751-7efd-4f0f-bd96-eddfd4f25f2e",
+      "name": "Create an event ",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "uncox1ugt9pMFpwt",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1UaCvzSoKPaPR1-yhH3pmaYjB2x1wdbV0yk3OVG4QSIM",
+          "mode": "list",
+          "cachedResultName": "retelle",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1UaCvzSoKPaPR1-yhH3pmaYjB2x1wdbV0yk3OVG4QSIM/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1UaCvzSoKPaPR1-yhH3pmaYjB2x1wdbV0yk3OVG4QSIM/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "issue": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('issue', ``, 'string') }}",
+            "number": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('number', ``, 'string') }}",
+            "time": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('time', ``, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "issue",
+              "displayName": "issue",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "number",
+              "displayName": "number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "time",
+              "displayName": "time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        240,
+        272
+      ],
+      "id": "10de1208-29b1-4684-ac48-faaebb32b7ab",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Z6zrm1fhPbTcGd12",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -496,
+        824
+      ],
+      "id": "df6d07f9-c16b-4ffa-a454-812dc4357fca",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "e4ojqFd9FvjhGatM",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "calendar": {
+          "__rl": true,
+          "value": "dhikrish42@gmail.com",
+          "mode": "list",
+          "cachedResultName": "dhikrish42@gmail.com"
+        },
+        "eventId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Event_ID', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        368,
+        272
+      ],
+      "id": "19f5eb4f-acc4-40e6-b7d6-bef54a807f9d",
+      "name": "Delete an event ",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "uncox1ugt9pMFpwt",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "calendar": {
+          "__rl": true,
+          "value": "dhikrish42@gmail.com",
+          "mode": "list",
+          "cachedResultName": "dhikrish42@gmail.com"
+        },
+        "eventId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Event_ID', ``, 'string') }}",
+        "updateFields": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        496,
+        272
+      ],
+      "id": "2db087ea-d73a-4784-b100-2b1f81b3e32e",
+      "name": "update an event",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "uncox1ugt9pMFpwt",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -272,
+        272
+      ],
+      "id": "840595d2-17f2-46f1-be95-5e3e176c721d",
+      "name": "Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Z1aGllIWuI50LWbD",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -496,
+        48
+      ],
+      "id": "f97aa501-34ac-4ce8-972b-5afae7d87970",
+      "name": "chat ",
+      "webhookId": "c7b1beb3-2c8e-4590-a390-9957a1cbec68"
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 10
+      },
+      "id": "437aecc4-c931-408f-a961-bfbe50f37aed",
+      "name": "Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -144,
+        272
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Get availability": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create an event ": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        []
+      ]
+    },
+    "Delete an event ": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "update an event": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        []
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        []
+      ]
+    },
+    "Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "chat ": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "fe61a41b-e4d6-4748-9bb0-c16187cf7f81",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e23de2e4d6a091f9baefcbdf87c6858ff12b67c6facb4375e421500fa33dfec3"
+  },
+  "id": "u0Q6Tmkhk9yW2uIY",
+  "tags": []
+}
