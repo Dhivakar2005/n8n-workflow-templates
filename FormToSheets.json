@@ -1,0 +1,218 @@
+{
+  "name": "FormToSheets",
+  "nodes": [
+    {
+      "parameters": {
+        "sendTo": "={{ $json['G-Mail'] }}",
+        "subject": "Confirmation: Student Submission Received",
+        "emailType": "text",
+        "message": "=Dear {{ $json.Name }},  \n  This is to confirm that your student submission has been received successfully.  \n  We will review the information and follow up if anything further is required.  \n\nThank you,\nAdministrator ",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "65eddf80-431a-4c19-8944-4e4fd4057b17",
+      "name": "Send a message",
+      "webhookId": "53c019a2-43d3-44c3-bf57-9c599ffb0383",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "3yhyhajrbhASjijD",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1CTznoln_wDEOR8vrP-G_xX9f9Zdt2rfnm-xoMCQH1-E",
+          "mode": "list",
+          "cachedResultName": "n8n-form",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1CTznoln_wDEOR8vrP-G_xX9f9Zdt2rfnm-xoMCQH1-E/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1CTznoln_wDEOR8vrP-G_xX9f9Zdt2rfnm-xoMCQH1-E/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ $('On form submission').item.json.Name }}",
+            "G-Mail": "={{ $('On form submission').item.json['G-Mail'] }}",
+            "Department": "={{ $('On form submission').item.json.Department }}",
+            "PhoneNumber": "={{ $('On form submission').item.json.PhoneNumber }}",
+            "S.No": "1"
+          },
+          "matchingColumns": [
+            "S.No"
+          ],
+          "schema": [
+            {
+              "id": "S.No",
+              "displayName": "S.No",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Department",
+              "displayName": "Department",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "G-Mail",
+              "displayName": "G-Mail",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "PhoneNumber",
+              "displayName": "PhoneNumber",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        416,
+        0
+      ],
+      "id": "3a904608-ca69-457e-a797-46fcd30c2557",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "CEn2XL7pp8eTberq",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "formTitle": "Student Detail Form",
+        "formDescription": "Give us your details.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Name",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Department",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "G-Mail",
+              "fieldType": "email",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "PhoneNumber",
+              "fieldType": "number",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.3,
+      "position": [
+        16,
+        0
+      ],
+      "id": "16e72d11-280c-4430-b4ac-a8265dfbc3b8",
+      "name": "On form submission",
+      "webhookId": "19a53f1b-ddcd-43ed-83cd-28ba24d327bb"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "0ff43bd7-84ee-482c-a501-502e61aeee4c",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "5f67c2d5cbd5de740e83bef39af802f77e7c775d9c55c5ed7741529300cd5a3d"
+  },
+  "id": "mMYRTUmhB9Aq8J2v",
+  "tags": []
+}
