@@ -1,0 +1,109 @@
+{
+  "name": "Quick_Math",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        0
+      ],
+      "id": "bbf3fd3d-eac1-4751-96dd-2512ad32b4fa",
+      "name": "When chat message received",
+      "webhookId": "59c7b8f1-aca5-4319-999b-9ea736a68d92"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        208,
+        0
+      ],
+      "id": "40f01ff9-1fa7-488f-84d7-d5215a69e461",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        80,
+        208
+      ],
+      "id": "f43fc744-6ae3-4e03-abde-2b74b1f804b9",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Z1aGllIWuI50LWbD",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolCalculator",
+      "typeVersion": 1,
+      "position": [
+        368,
+        208
+      ],
+      "id": "07c22902-22be-4f65-b6bf-281f83241071",
+      "name": "Calculator"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculator": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "c1830963-3e88-4529-9ce1-fa988480f83c",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e23de2e4d6a091f9baefcbdf87c6858ff12b67c6facb4375e421500fa33dfec3"
+  },
+  "id": "5cMwBWcrtjOUvE9P",
+  "tags": []
+}
