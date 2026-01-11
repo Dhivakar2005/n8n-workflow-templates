@@ -1,0 +1,149 @@
+{
+  "name": "PDF Extract",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {
+          "download": true
+        }
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -1040,
+        304
+      ],
+      "id": "763f5342-cce0-48b9-9260-8b65631447d6",
+      "name": "Telegram Trigger",
+      "webhookId": "5e42d947-8d56-4aec-a985-faf01158cf2d",
+      "credentials": {
+        "telegramApi": {
+          "id": "x3ExmA6KO3ybhPQf",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        -816,
+        304
+      ],
+      "id": "e787eec1-65d6-4d29-bf62-a505268808f4",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.from.id }}",
+        "text": "={{ $('Extract from File').item.json.text }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -160,
+        304
+      ],
+      "id": "2a5a806e-04a3-449f-8d9c-68f42b439436",
+      "name": "Telegram",
+      "webhookId": "db2e30e7-093e-4f17-8c1a-240d39eec998",
+      "credentials": {
+        "telegramApi": {
+          "id": "x3ExmA6KO3ybhPQf",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=\"Instruction\": \"Extract and format key details from this document into a clear and structured text message suitable for Telegram. The message should include: \\n\\n🔹 Invoice Details (Invoice Number, Total Amount, Gross Amount, VAT)\n🔹 Service Charges (Transaction Fees, Query Fees) \n🔹 Individual Query Charges (Summarized List)\n    Use bullet points, spacing, and emojis to improve readability. The response should be plain text (not JSON).\n\ninput: {{ $json.text }}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        -608,
+        304
+      ],
+      "id": "857a47a6-dcef-4d36-ab72-949a361ee7e1",
+      "name": "Message a model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "nrHGTu8rVXdLjCJs",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "c697785c-f1b2-40df-8057-f39e0cce367e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "701bcc7dedd1e8d654ef30fda5ff0d3c1c08d9d624cfa181e117581492b05820"
+  },
+  "id": "wjMnXYh5kk2cdZOh7_w9S",
+  "tags": []
+}

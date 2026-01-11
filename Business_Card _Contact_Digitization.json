@@ -1,0 +1,338 @@
+{
+  "name": "Business_Card _Contact_Digitization",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Name Card Uploader Form",
+        "formDescription": "Upload a photo of one or more business cards. Our system will automatically extract contact details, such as name, company, phone number, and email, and save them to your team’s Google Sheet for easy access and follow-up.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Name Card Picture",
+              "fieldType": "file",
+              "multipleFiles": false,
+              "acceptFileTypes": ".jpg,.jpge,.png"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "1ac40a88-d817-4c8b-ad1c-87e22c796297",
+      "name": "On form submission",
+      "type": "n8n-nodes-base.formTrigger",
+      "position": [
+        2464,
+        608
+      ],
+      "webhookId": "916fbea3-2f7f-47fe-9580-fd1eda1936ca",
+      "typeVersion": 2.2
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1tUNzcUs5Z7Lfys0Skzbua7Oy7JjwMPS8dK-r99cNdXo",
+          "mode": "list",
+          "cachedResultName": "Namecard_details",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1tUNzcUs5Z7Lfys0Skzbua7Oy7JjwMPS8dK-r99cNdXo/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1tUNzcUs5Z7Lfys0Skzbua7Oy7JjwMPS8dK-r99cNdXo/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "JobTitle",
+              "displayName": "JobTitle",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Company",
+              "displayName": "Company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Phone",
+              "displayName": "Phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Website",
+              "displayName": "Website",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Address",
+              "displayName": "Address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "LinkedIn",
+              "displayName": "LinkedIn",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "fa11ca98-138f-4192-938b-a8a80c84e704",
+      "name": "Add contact to tracking sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        3488,
+        608
+      ],
+      "typeVersion": 4.6,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "fq4IOS4OXlwYEL3O",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const allItems = $input.all();\nlet output = [];\n\nfor (const item of allItems) {\n  const contacts = item.json.output;\n\n  for (const contact of contacts) {\n    const cleanedPhone = contact.phone ? contact.phone.replace(/\\+/g, '') : '';\n    output.push({\n      json: {\n        Name: contact.name || '',\n        JobTitle: contact.job_title || '',\n        Company: contact.company || '',\n        Phone: cleanedPhone || '',\n        Email: contact.email.toLowerCase() || '',\n        Website: contact.website || '',\n        Address: contact.address || '',\n        LinkedIn: contact.linkedin || ''\n      }\n    });\n  }\n}\n\nreturn output;"
+      },
+      "id": "c440f7a1-5408-4329-95b4-f53f59e25aaf",
+      "name": "Transform Output",
+      "type": "n8n-nodes-base.code",
+      "position": [
+        3040,
+        608
+      ],
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "[{\n    \"name\": \"John Doe\",\n    \"job_title\": \"Sales Manager\",\n    \"company\": \"TechCorp Inc.\",\n    \"phone\": \"+1234567890\",\n    \"email\": \"user@example.com\",\n    \"website\": \"https://www.techcorp.com\",\n    \"address\": \"123 Market Street, San Francisco, CA\",\n    \"linkedin\": \"https://linkedin.com/in/johndoe\"\n  }]"
+      },
+      "id": "cc137cc8-b76f-42ae-9b8a-af2d571c1c03",
+      "name": "Structured Output Parser",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "position": [
+        2832,
+        832
+      ],
+      "typeVersion": 1.3
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "id": "8cc9ca55-30bc-4ea8-b272-d56eb7b31ae7",
+      "name": "GPT4o",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "position": [
+        2704,
+        832
+      ],
+      "typeVersion": 1.2,
+      "credentials": {
+        "openAiApi": {
+          "id": "3PgsV7sEqxFRYBxB",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Extract all business contact details from this image of multiple name cards. Return full names, job titles, company names, phone numbers, email addresses, websites, office addresses, and any relevant information such as QR code content or social media links. Do not include decorative elements or branding.",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "You are a smart assistant that helps sales and business development teams extract business contact information from images containing multiple business cards. Your role is to analyze the image, detect all individual cards, and extract relevant details such as full name, job title, company name, phone number, email address, website, office address, social media links, and any QR code content. You should skip any decorative or branding elements and focus only on useful business information. Maintain a logical reading order from top to bottom, left to right. Your output will be used by a downstream parser, so return clean, readable text without additional formatting or structure."
+        }
+      },
+      "id": "d4a9842e-6fec-4beb-b97f-0a5ee08a2a22",
+      "name": "Neural assistant for contact extraction",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "position": [
+        2688,
+        608
+      ],
+      "typeVersion": 2.1
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "841d0d69-4413-43dd-a48b-034d0f6af183",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              },
+              "leftValue": "={{ $json.Name }}",
+              "rightValue": ""
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "9d4b09a1-2c87-4695-a705-16b21be0dabf",
+      "name": "Filter bad data",
+      "type": "n8n-nodes-base.filter",
+      "position": [
+        3264,
+        608
+      ],
+      "typeVersion": 2.2
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "GPT4o": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Neural assistant for contact extraction",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter bad data": {
+      "main": [
+        [
+          {
+            "node": "Add contact to tracking sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transform Output": {
+      "main": [
+        [
+          {
+            "node": "Filter bad data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Neural assistant for contact extraction",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Neural assistant for contact extraction",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Neural assistant for contact extraction": {
+      "main": [
+        [
+          {
+            "node": "Transform Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "289e8aae-08d6-4abf-9c9b-db987517c126",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "701bcc7dedd1e8d654ef30fda5ff0d3c1c08d9d624cfa181e117581492b05820"
+  },
+  "id": "BfQDr8a7AREKJsUE2ZNxB",
+  "tags": []
+}
